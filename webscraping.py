@@ -15,10 +15,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
 import os
-from selenium.webdriver.common.by import By
+#from selenium.webdriver.common.by import By
 
 #pasta onde irá ficar os pdfs
-pasta_destino = ('C:\\Users\marlon.negreiros\\Documents\\Vscode codigo\\Git\\webscrapping_test\\Pdfs baixados')
+pasta_destino = ('C:\\Users\\marlon.negreiros\\Documents\\repositorio vinivius\\webscrapping_test\\pdfs-baixados')
 
 # Cria a pasta se ela não existir
 os.makedirs(pasta_destino, exist_ok=True)
@@ -37,8 +37,7 @@ driver = webdriver.Chrome(options=chrome_options)
 
 # Lista de URLs para serem processadas
 urls = [
-    'http://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=144&url=L3NjcHJvMTkyMy5uc2YvMThjMWRkNjhmOTZiZTNlNzgzMjU2NmVjMDAxOGQ4MzMvMWNkOGFlMmQwODA2ODk4OTAzMjU4OTFmMDA2M2YwODA/T3BlbkRvY3VtZW50#',
-    'http://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=144&url=L3NjcHJvMTkyMy5uc2YvMThjMWRkNjhmOTZiZTNlNzgzMjU2NmVjMDAxOGQ4MzMvOGMwNjYzZTU3ZjkzNTBmOTAzMjU4OGZjMDA1NjkzMGQ/T3BlbkRvY3VtZW50'
+    'https://www.conab.gov.br/comercializacao/leiloes-publicos/compra-publica?start=20'
     # Adicione mais URLs conforme necessário
 ]
 
