@@ -40,7 +40,7 @@ try:
     for url in urls:
 
         driver.get(url)
-
+        
         # Dá um tempo para a página carregar (ajuste conforme necessário)
         time.sleep(5)
 
