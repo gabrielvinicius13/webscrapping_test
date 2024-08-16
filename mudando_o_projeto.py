@@ -1,6 +1,7 @@
 import os
 import time
 import requests
+from requests.exceptions import ChunkedEncodingError
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
@@ -51,20 +52,25 @@ def processar_pagina(url):
             if pdf_url.startswith('/'):
                 pdf_url = urljoin(url, pdf_url)
 
-            response = requests.get(pdf_url)
+            try:
+                response = requests.get(pdf_url, timeout=30)  # Define um timeout para evitar bloqueios
+                response.raise_for_status()
 
-            if response.status_code == 200:
-                pdf_nome = limpar_nome(link_text) + ".pdf"
-                pdf_caminho = os.path.join(pasta_caminho, pdf_nome)
+                if response.status_code == 200:
+                    pdf_nome = limpar_nome(link_text) + ".pdf"
+                    pdf_caminho = os.path.join(pasta_caminho, pdf_nome)
 
-                if pdf_nome:
-                    with open(pdf_caminho, 'wb') as pdf_file:
-                        pdf_file.write(response.content)
-                    print(f"Baixado: {pdf_nome} para {pasta_nome}")
+                    if pdf_nome:
+                        with open(pdf_caminho, 'wb') as pdf_file:
+                            pdf_file.write(response.content)
+                        print(f"Baixado: {pdf_nome} para {pasta_nome}")
+                    else:
+                        print(f"Nome de arquivo inválido, ignorando: {link_text}")
                 else:
-                    print(f"Nome de arquivo inválido, ignorando: {link_text}")
-            else:
-                print(f"Falha ao baixar {pdf_url}: Status {response.status_code}")
+                    print(f"Falha ao baixar {pdf_url}: Status {response.status_code}")
+            
+            except (requests.exceptions.RequestException, ChunkedEncodingError) as e:
+                print(f"Erro ao baixar {pdf_url}: {e}")
 
 # Função para encontrar o link da próxima página
 def proxima_pagina(soup, pagina_atual):
@@ -76,14 +82,26 @@ def proxima_pagina(soup, pagina_atual):
             next_page_link = ul_tag.find('a', class_='pagenav', string=str(pagina_atual + 1))
             if next_page_link and 'href' in next_page_link.attrs:
                 return urljoin(url_base, next_page_link['href'])
+            else:
+                # Se não houver um link com o número exato da próxima página, tentar o próximo na lista
+                links = ul_tag.find_all('a', class_='pagenav')
+                for link in links:
+                    href = link['href']
+                    page_number_match = re.search(r'start=(\d+)', href)
+                    if page_number_match:
+                        page_number = int(page_number_match.group(1))
+                        if page_number > pagina_atual * 10:  # Assumindo paginação de 10 itens por página
+                            return urljoin(url_base, href)
     return None
 
 # Limite de páginas a serem processadas
-limite_paginas = 4  # Defina o número máximo de páginas que deseja processar
-pagina_atual = 1  # Começamos na página 1
+limite_paginas = 15  # Defina o número máximo de páginas que deseja processar
+pagina_atual = 10  # Começa a partir da página 10
 
-url_atual = url_base
-while url_atual and pagina_atual < limite_paginas:
+# URL da página 10
+url_atual = urljoin(url_base, "?start=90")  # 10ª página, considerando que cada página tem 10 itens
+
+while url_atual and pagina_atual < limite_paginas + 10:  # Ajuste o limite para considerar o início na página 10
     processar_pagina(url_atual)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     url_atual = proxima_pagina(soup, pagina_atual)
