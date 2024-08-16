@@ -68,16 +68,16 @@ try:
         time.sleep(2)
 
         # Nome do arquivo original (o nome que o site dá ao arquivo)
-        original_name = "ALERJ - Assembléia Legislativa do Estado do Rio de Janeiro.pdf"  # Supondo que o arquivo sempre tenha esse nome
-        caminho_original = os.path.join(pasta_destino, original_name)
+        #original_name = "ALERJ - Assembléia Legislativa do Estado do Rio de Janeiro.pdf"  # Supondo que o arquivo sempre tenha esse nome
+        #caminho_original = os.path.join(pasta_destino, original_name)
 
         # Espera o arquivo aparecer no diretório (caso o download ainda esteja em andamento)
-        while not os.path.exists(caminho_original):
-            time.sleep(1)
+        #while not os.path.exists(caminho_original):
+        #    time.sleep(1)
 
         # Renomeia o arquivo
-        os.rename(caminho_original, caminho_novo)
-        print(f"Arquivo renomeado para {nome_arquivo}")
+        #os.rename(caminho_original, caminho_novo)
+        #print(f"Arquivo renomeado para {nome_arquivo}")
 
 finally:
     driver.quit()
