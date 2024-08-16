@@ -67,25 +67,26 @@ def processar_pagina(url):
                 print(f"Falha ao baixar {pdf_url}: Status {response.status_code}")
 
 # Função para encontrar o link da próxima página
-def proxima_pagina(soup):
+def proxima_pagina(soup, pagina_atual):
     pagination = soup.find('div', class_='pagination row-fluid text-center')
     if pagination:
         ul_tag = pagination.find('ul')
         if ul_tag:
-            next_page_link = ul_tag.find('a', class_='pagenav')  # Encontrar o primeiro link com a classe 'pagenav'
+            # Procurar o link com a classe 'pagenav' e o número da próxima página
+            next_page_link = ul_tag.find('a', class_='pagenav', string=str(pagina_atual + 1))
             if next_page_link and 'href' in next_page_link.attrs:
                 return urljoin(url_base, next_page_link['href'])
     return None
 
 # Limite de páginas a serem processadas
-limite_paginas = 2  # Defina o número máximo de páginas que deseja processar
-pagina_atual = 0
+limite_paginas = 4  # Defina o número máximo de páginas que deseja processar
+pagina_atual = 1  # Começamos na página 1
 
 url_atual = url_base
 while url_atual and pagina_atual < limite_paginas:
     processar_pagina(url_atual)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
-    url_atual = proxima_pagina(soup)
+    url_atual = proxima_pagina(soup, pagina_atual)
     pagina_atual += 1
 
 # Fecha o navegador
