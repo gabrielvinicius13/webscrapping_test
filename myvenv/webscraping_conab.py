@@ -36,7 +36,20 @@ try:
     texto_titulo = titulo.text
     texto_descricao = descricao.text
     
+    #Expressão regular para capturar o padrão de numeração da compra e também a data que irá ser realizada.
+    
+    id_match = re.search(r'\d{3}-\d{4}', texto_titulo)
+    data_match= re.search(r'\d{2}/\d{2}/\d{4}', texto_titulo)
+
+    if id_match and data_match:
+        id = id_match.group(0)
+        data = data_match.group(0)
+    else:
+        raise Exception("ID ou Data não encontrados no título")
+
     dados = {
+        "id":id,
+        "data-da-compra": data,
         "titulo":texto_titulo,
         "descricao":texto_descricao
     }
