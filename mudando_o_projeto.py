@@ -26,7 +26,7 @@ def limpar_nome(nome):
 # Função para processar uma página
 def processar_pagina(url):
     driver.get(url)
-    time.sleep(5)  # Espera o carregamento da página
+    time.sleep(2)  # Espera o carregamento da página
 
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     divs_span10 = soup.find_all('div', class_='span10')
@@ -95,13 +95,13 @@ def proxima_pagina(soup, pagina_atual):
     return None
 
 # Limite de páginas a serem processadas
-limite_paginas = 15  # Defina o número máximo de páginas que deseja processar
-pagina_atual = 10  # Começa a partir da página 10
+limite_paginas = 1  # Defina o número máximo de páginas que deseja processar
+pagina_atual = 0 # Começa a partir da página
 
 # URL da página 10
-url_atual = urljoin(url_base, "?start=90")  # 10ª página, considerando que cada página tem 10 itens
+url_atual = urljoin(url_base, "?start=0")  #Caso queira pegar a partir de uma pagina especifica
 
-while url_atual and pagina_atual < limite_paginas + 10:  # Ajuste o limite para considerar o início na página 10
+while url_atual and pagina_atual < limite_paginas: #+ 1090:  # possivel ajustar o limite para página que desejar
     processar_pagina(url_atual)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     url_atual = proxima_pagina(soup, pagina_atual)
