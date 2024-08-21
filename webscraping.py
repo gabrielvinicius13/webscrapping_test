@@ -28,6 +28,8 @@ cursor.execute('''
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         titulo TEXT,
         descricao TEXT,
+        data_compra TEXT,
+        hora_compra TEXT,
         pdf_nome TEXT,
         info_extraida TEXT
     )
@@ -65,12 +67,32 @@ def processar_pagina(url):
         pasta_nome = limpar_nome(h2_text)
         pasta_caminho = os.path.join('C:\\Users\\marlon.negreiros\\Documents\\repositorio vinivius\\webscrapping_test\\mypdfs', pasta_nome)
         os.makedirs(pasta_caminho, exist_ok=True)
-
+        
+        #extraindo descrição
         p_text = div.find('p').text.strip() if div.find('p') else "Sem Descrição"
 
+        # Procurar a div com a classe 'tileInfo span2' para extrair a data e hora
+        tile_info = div.find_next('div', class_='tileInfo span2')
+        if tile_info:
+            ul_tag = tile_info.find('ul')
+            if ul_tag:
+                li_tags = ul_tag.find_all('li')
+                data = li_tags[0].text.strip() if len(li_tags) > 0 else "Data não encontrada"
+                hora = li_tags[1].text.strip() if len(li_tags) > 1 else "Hora não encontrada"
+            else:
+                data = "Data não encontrada"
+                hora = "Hora não encontrada"
+        else:
+            data = "Data não encontrada"
+            hora = "Hora não encontrada"
+
+        
+         # Gravar as informações no arquivo de texto
         with open(os.path.join(pasta_caminho, "informacoes.txt"), "w", encoding='utf-8') as f:
             f.write(f"Título: {h2_text}\n")
             f.write(f"Descrição: {p_text}\n")
+            f.write(f"Data da compra: {data}\n")
+            f.write(f"Hora da compra: {hora}\n")
 
         pdf_links = div.find_all('a', href=True)
         
@@ -99,9 +121,9 @@ def processar_pagina(url):
 
                         # Salvar informações no banco de dados
                         cursor.execute('''
-                            INSERT INTO pdf_info (titulo, descricao, pdf_nome, info_extraida)
-                            VALUES (?, ?, ?, ?)
-                        ''', (h2_text, p_text, pdf_nome, info_extraida))
+                            INSERT INTO pdf_info (titulo, descricao, data_compra, hora_compra, pdf_nome, info_extraida)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        ''', (h2_text, p_text, data, hora, pdf_nome, info_extraida))
                         conn.commit()  # Salva as alterações no banco de dados
 
                     else:
@@ -136,12 +158,12 @@ def proxima_pagina(soup, pagina_atual):
 
 # Limite de páginas a serem processadas
 limite_paginas = 1  # Defina o número máximo de páginas que deseja processar
-pagina_atual = 0 # Começa a partir da página
+pagina_atual = 1 # Começa a partir da página
 
 # URL da página 10
 url_atual = urljoin(url_base, "?start=0")  # Caso queira pegar a partir de uma pagina especifica
 
-while url_atual and pagina_atual < limite_paginas: #+ 1090:  # possivel ajustar o limite para página que desejar
+while url_atual and pagina_atual < limite_paginas + 1:  # possivel ajustar o limite para página que desejar
     processar_pagina(url_atual)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     url_atual = proxima_pagina(soup, pagina_atual)
