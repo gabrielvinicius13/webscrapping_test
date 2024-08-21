@@ -49,7 +49,7 @@ def limpar_nome(nome):
 def extrair_informacao_pdf(pdf_caminho):
     with open(pdf_caminho, 'rb') as pdf_file:
         reader = PdfReader(pdf_file)
-        texto = 'TESTEE'
+        texto = ''
         for page in reader.pages:
             texto += page.extract_text()
         return texto

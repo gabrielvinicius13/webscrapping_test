@@ -47,7 +47,7 @@ Para executar o script, ajuste as variáveis conforme necessário e execute:
 `python mudando_o_projeto.py`
 
 ## Personalização
-Limite de Páginas: O número de páginas a serem processadas pode ser ajustado alterando a variável limite_paginas.
+- Limite de Páginas: O número de páginas a serem processadas pode ser ajustado alterando a variável limite_paginas.
 Página Inicial: Para começar a partir de uma página específica, ajuste url_atual para a URL desejada.
 Exemplo de Código
 O seguinte código ilustra o funcionamento básico do script:
@@ -73,7 +73,7 @@ driver.quit()
 ```
 
 ## Estrutura do Projeto
-- mudando_o_projeto.py: Script principal que realiza o web scraping.
+- webscraping.py: Script principal que realiza o web scraping.
 - requirements.txt: Lista de dependências do projeto.
 - README.md: Documentação do projeto.
 ## Contribuição
